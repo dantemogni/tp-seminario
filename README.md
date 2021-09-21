@@ -5,3 +5,9 @@ Cosas que se podrian hacer:
 - Poner un menu que permita elegir los niveles de dificultad (alternando las velocidades)
 - Que los astetorides de mayor tamaño dañen en mayor medida a la nave y que los más pequeños resten menos puntos de salud
 - Introducir elementos que al pasar sobre ellos nos devuelvan toda la salud o nos den "superpoderes" para no tener daño por X tiempo
+
+Link al tutorial y codigo donde se sacó esto:
+-Videos:https://www.youtube.com/watch?v=jrUJ8EsnctI&list=PLuB3bC9rWQAuzlz932pjjFLE1q8caF21N
+-Codigo: https://github.com/mundo-python/shooter-pygame/blob/master/shooter.py
+
+Otro link de otro tutorial que podría servirnos: https://realpython.com/asteroids-game-python/

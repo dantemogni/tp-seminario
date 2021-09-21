@@ -11,3 +11,5 @@ Link al tutorial y codigo donde se sacó esto:
 - Codigo: https://github.com/mundo-python/shooter-pygame/blob/master/shooter.py
 
 Otro link de otro tutorial que podría servirnos: https://realpython.com/asteroids-game-python/
+
+Para ejecutarlo basta con poner `python app.py` desde la terminal (estando en el directorio del proyecto)

@@ -133,17 +133,16 @@ class Player(pygame.sprite.Sprite):
 
     def update(self):
         """Genera el movimiento"""
-        self.speed_x = 0
+        speed = 8
         keystate = pygame.key.get_pressed()
-        if keystate[pygame.K_LEFT]:
-            self.speed_x = -5
-        if keystate[pygame.K_RIGHT]:
-            self.speed_x = 5
-        self.rect.x += self.speed_x
-        if self.rect.right > WIDTH:
-            self.rect.right = WIDTH
-        if self.rect.left < 0:
-            self.rect.left = 0
+        if keystate[pygame.K_LEFT] and self.rect.left > 0:
+            self.rect.x -= speed
+        if keystate[pygame.K_RIGHT] and self.rect.right < WIDTH:
+            self.rect.x += speed 
+        if keystate[pygame.K_UP] and self.rect.top > 0:
+            self.rect.y -= speed
+        if keystate[pygame.K_DOWN] and self.rect.bottom < HEIGHT:
+            self.rect.y += speed
 
     def shoot(self):
         bullet = Bullet(self.rect.centerx, self.rect.top)

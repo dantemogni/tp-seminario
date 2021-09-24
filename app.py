@@ -122,7 +122,7 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         """Creamos los atributos del jugador"""
         super().__init__()
-        self.laser_sound = pygame.mixer.Sound("assets/sounds/laser5.wav")
+        self.laser_sound = pygame.mixer.Sound("assets/sounds/laser5.ogg")
         self.image = pygame.image.load("assets/nave.png").convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
@@ -234,7 +234,7 @@ if __name__ == '__main__':
     pygame.init()
     pygame.mixer.init()
     pygame.display.set_caption("Shooter")
-    pygame.mixer.music.load("assets/sounds/music.wav")
+    pygame.mixer.music.load("assets/sounds/music.ogg")
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(loops=-1)
 

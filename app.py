@@ -10,7 +10,7 @@ GREEN = (0, 255, 0)
 class Game():
     def __init__(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.background = pygame.image.load("assets/background.png").convert()
+        self.background = pygame.image.load("assets/fondo2.png").convert()
         self.explosion_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
         self.game_over = True
         self.running = True

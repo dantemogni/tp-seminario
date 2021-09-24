@@ -157,7 +157,7 @@ class Meteor(pygame.sprite.Sprite):
 
         """Imagenes de los meteoritos"""
         self.meteor_images = []
-        self.meteor_list = ["assets/meteorGrey_big1.png", "assets/meteorGrey_big2.png", "assets/meteorGrey_big3.png", "assets/meteorGrey_big4.png",
+        self.meteor_list = ["assets/meteoro_big1.png", "assets/meteoro_big2.png", "assets/meteoro_big3.png", "assets/meteoro_big4.png",
 				"assets/meteorGrey_med1.png", "assets/meteorGrey_med2.png", "assets/meteorGrey_small1.png", "assets/meteorGrey_small2.png",
 				"assets/meteorGrey_tiny1.png", "assets/meteorGrey_tiny2.png"]
 

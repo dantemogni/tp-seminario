@@ -123,7 +123,7 @@ class Player(pygame.sprite.Sprite):
         """Creamos los atributos del jugador"""
         super().__init__()
         self.laser_sound = pygame.mixer.Sound("assets/sounds/laser5.wav")
-        self.image = pygame.image.load("assets/player.png").convert()
+        self.image = pygame.image.load("assets/nave.png").convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
         self.rect.centerx = WIDTH // 2

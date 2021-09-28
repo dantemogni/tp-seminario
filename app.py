@@ -11,13 +11,16 @@ class Game():
     def __init__(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         self.background = pygame.image.load("assets/fondo2.png").convert()
+        self.pause_background = pygame.image.load("assets/background.png").convert()
         self.explosion_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
-        self.game_over = True
+        self.explosion_sound.set_volume(0.2)
+        self.game_over = True 
         self.running = True
         self.score = 0
         self.all_sprites = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
         self.bullets = pygame.sprite.Group()
+        self.paused = False
 
 
     def show_go_screen(self):
@@ -64,6 +67,23 @@ class Game():
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_SPACE:
                         player.shoot()
+                    if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
+                        self.paused = True
+            
+            while self.paused:
+                self.running = False
+                self.draw_text(self.pause_background, "Paused", 60, WIDTH // 2, 50)
+                self.draw_text(self.pause_background, "Presione 'P' o 'Esc' para despausar", 37, WIDTH // 2, HEIGHT // 2)
+                self.screen.blit(self.pause_background, [0, 0])
+                pygame.display.update()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        pygame.quit()
+                        quit()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
+                            self.paused = False
+                            self.running = True
 
             self.all_sprites.update()
 
@@ -79,7 +99,7 @@ class Game():
                 meteor_list.add(meteor)
 
             # Checar colisiones - jugador - meteoro
-            hits = pygame.sprite.spritecollide(player, meteor_list, True)
+            hits = pygame.sprite.spritecollide(player, meteor_list, True, pygame.sprite.collide_mask)
             for hit in hits:
                 player.shield -= 25
                 meteor = Meteor()
@@ -122,10 +142,12 @@ class Player(pygame.sprite.Sprite):
     def __init__(self):
         """Creamos los atributos del jugador"""
         super().__init__()
-        self.laser_sound = pygame.mixer.Sound("assets/sounds/laser5.ogg")
+        self.laser_sound = pygame.mixer.Sound("assets/sounds/laser5.wav")
         self.image = pygame.image.load("assets/nave.png").convert()
         self.image.set_colorkey(BLACK)
         self.rect = self.image.get_rect()
+        #mascara
+        self.mask = pygame.mask.from_surface(self.image)
         self.rect.centerx = WIDTH // 2
         self.rect.bottom = HEIGHT - 10
         self.speed_x = 0
@@ -234,7 +256,7 @@ if __name__ == '__main__':
     pygame.init()
     pygame.mixer.init()
     pygame.display.set_caption("Shooter")
-    pygame.mixer.music.load("assets/sounds/music.ogg")
+    pygame.mixer.music.load("assets/sounds/music.wav")
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(loops=-1)
 

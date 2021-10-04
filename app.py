@@ -1,5 +1,7 @@
 import pygame, random
 
+from pygame.constants import KEYDOWN
+
 WIDTH = 800
 HEIGHT = 600
 
@@ -22,12 +24,12 @@ class Game():
         self.bullets = pygame.sprite.Group()
         self.paused = False
 
-
+    #Pantalla de inicio
     def show_go_screen(self):
         self.screen.blit(self.background, [0,0])
         self.draw_text(self.screen, "SHOOTER", 65, WIDTH // 2, HEIGHT // 4)
-        self.draw_text(self.screen, "Instruciones van aquí", 27, WIDTH // 2, HEIGHT // 2)
-        self.draw_text(self.screen, "Press Key", 20, WIDTH // 2, HEIGHT * 3/4)
+        self.draw_text(self.screen, "Presione ENTER para iniciar", 20, WIDTH // 2, HEIGHT // 2)
+        self.draw_text(self.screen, "Precione ESC para salir", 20, WIDTH // 2, HEIGHT * 6/10)
         pygame.display.flip()
 
         waiting = True
@@ -36,20 +38,49 @@ class Game():
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     pygame.quit()
-                if event.type == pygame.KEYUP:
-                    waiting = False
+                    quit()
+                if event.type == pygame.KEYUP: 
+                    if event.key == pygame.K_RETURN:      
+                        waiting = False             
+                if event.type == pygame.KEYUP: 
+                    if event.key == pygame.K_ESCAPE:      
+                        pygame.quit()
+                        quit()                                            
     
+    #Pantalla para elegir nave
+    def choose_ship(self):
+        self.screen.blit(self.background, [0,0])
+        
+        self.image = pygame.image.load("assets/halconM.png").convert()
+        self.image.set_colorkey(BLACK)
+        self.screen.blit(self.image, [WIDTH * 8/20, HEIGHT * 4/10])
+        self.draw_text(self.screen, "Pulse 1 - Halcon Milenario", 20, WIDTH // 2, HEIGHT * 6/10)
 
+        pygame.display.flip()
+
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYUP: 
+                    if event.key == pygame.K_1:    
+                        waiting = False 
+#--------------------------------------------------------------------------------------------------------------------
+#-------------------------------------------------Comienzo del loop juego--------------------------------------------
     def main_loop(self):
         while self.running:
             if self.game_over:
-                self.show_go_screen()
+                self.show_go_screen()          #pantalla de inicio
+                self.choose_ship()         #pantalla para elegir nave (solo hay 1 por ahora)
                 self.game_over = False
 
                 self.all_sprites = pygame.sprite.Group()
                 meteor_list = pygame.sprite.Group()
                 self.bullets = pygame.sprite.Group()
                 
+                #Jugador
                 player = Player()
                 self.all_sprites.add(player)
 
@@ -59,7 +90,7 @@ class Game():
                     meteor_list.add(meteor)
                 self.score = 0
 
-            self.clock.tick(60)
+            self.clock.tick(60)   #Velocidad del juego
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -70,10 +101,12 @@ class Game():
                     if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
                         self.paused = True
             
+            #Pausa
             while self.paused:
                 self.running = False
-                self.draw_text(self.pause_background, "Paused", 60, WIDTH // 2, 50)
-                self.draw_text(self.pause_background, "Presione 'P' o 'Esc' para despausar", 37, WIDTH // 2, HEIGHT // 2)
+                self.draw_text(self.pause_background, "Pausa", 60, WIDTH // 2, 50)
+                self.draw_text(self.pause_background, "Presione 'P' o 'Esc' para continuar", 37, WIDTH // 2, HEIGHT // 2)
+                self.draw_text(self.pause_background, "Presione 'Q' para salir", 30, WIDTH // 2, HEIGHT * 3/4)
                 self.screen.blit(self.pause_background, [0, 0])
                 pygame.display.update()
                 for event in pygame.event.get():
@@ -84,6 +117,10 @@ class Game():
                         if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
                             self.paused = False
                             self.running = True
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_q:
+                            pygame.quit()
+                            quit()
 
             self.all_sprites.update()
 
@@ -98,12 +135,15 @@ class Game():
                 self.all_sprites.add(meteor)
                 meteor_list.add(meteor)
 
-            # Checar colisiones - jugador - meteoro
+            # Colisiones - jugador - meteoro
             hits = pygame.sprite.spritecollide(player, meteor_list, True, pygame.sprite.collide_mask)
             for hit in hits:
                 player.shield -= 25
                 meteor = Meteor()
+                self.explosion_sound.play()
+                explosion = Explosion(hit.rect.center)
                 self.all_sprites.add(meteor)
+                self.all_sprites.add(explosion)
                 meteor_list.add(meteor)
                 if player.shield <= 0: # si el jugador se queda sin puntos pierde
                     self.game_over = True
@@ -113,22 +153,25 @@ class Game():
             self.all_sprites.draw(self.screen)
 
             #Marcador
-            self.draw_text(self.screen, str(self.score), 25, WIDTH // 2, 10)
+            self.draw_text(self.screen, str(self.score), 25, WIDTH * 33/35, 10)
+            self.draw_text(self.screen, "Puntaje:", 25, WIDTH * 30/35, 10)
 
             # Escudo.
             self.draw_shield_bar(self.screen, 5, 5, player.shield)
-
+            self.draw_text(self.screen, "Salud", 20, WIDTH * 3/35, HEIGHT * 1/35)
             pygame.display.flip()
 
         pygame.quit()
-
+    
+    #Escribir texto en pantalla
     def draw_text(self, surface, text, size, x, y):
         font = pygame.font.SysFont("serif", size)
         text_surface = font.render(text, True, WHITE)
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
         surface.blit(text_surface, text_rect)
-
+    
+    #Barra de vida
     def draw_shield_bar(self, surface, x, y, percentage):
         BAR_LENGHT = 100
         BAR_HEIGHT = 10
@@ -138,13 +181,15 @@ class Game():
         pygame.draw.rect(surface, GREEN, fill)
         pygame.draw.rect(surface, WHITE, border, 2)
 
+#-----------------------------------------------------Fin del loop juego---------------------------------------------
+#--------------------------------------------------------------------------------------------------------------------
 class Player(pygame.sprite.Sprite):
     def __init__(self):
         """Creamos los atributos del jugador"""
         super().__init__()
         self.laser_sound = pygame.mixer.Sound("assets/sounds/laser5.wav")
-        self.image = pygame.image.load("assets/nave.png").convert()
-        self.image.set_colorkey(BLACK)
+        self.image = pygame.image.load("assets/halcon.png").convert()
+        self.image.set_colorkey(BLACK)  
         self.rect = self.image.get_rect()
         #mascara
         self.mask = pygame.mask.from_surface(self.image)
@@ -249,7 +294,6 @@ class Explosion(pygame.sprite.Sprite):
                 self.image = self.explosion_anim[self.frame]
                 self.rect = self.image.get_rect()
                 self.rect.center = center
-
 
 if __name__ == '__main__':
     """Esto es lo primero que se ejecuta cuando se llama a app.py"""

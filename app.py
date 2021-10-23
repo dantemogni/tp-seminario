@@ -1,6 +1,7 @@
 import pygame, random
 
 from pygame.constants import KEYDOWN
+from pygame.key import start_text_input
 
 WIDTH = 800
 HEIGHT = 600
@@ -50,11 +51,19 @@ class Game():
     #Pantalla para elegir nave
     def choose_ship(self):
         self.screen.blit(self.background, [0,0])
+
+        self.image = pygame.image.load("assets/avion2-costado.png")
+        self.screen.blit(self.image, [WIDTH * 2/20, HEIGHT * 4/10])
+        self.draw_text(self.screen, "Pulse 1 - Boeing 747", 20, WIDTH * 4/20, HEIGHT * 6/10)
         
         self.image = pygame.image.load("assets/halconM.png").convert()
         self.image.set_colorkey(BLACK)
         self.screen.blit(self.image, [WIDTH * 8/20, HEIGHT * 4/10])
-        self.draw_text(self.screen, "Pulse 1 - Halcon Milenario", 20, WIDTH // 2, HEIGHT * 6/10)
+        self.draw_text(self.screen, "Pulse 2 - Halcon Milenario", 20, WIDTH // 2, HEIGHT * 6/10)
+
+        self.image = pygame.image.load("assets/elmo.png")
+        self.screen.blit(self.image, [WIDTH * 14/20, HEIGHT * 2.3/10])
+        self.draw_text(self.screen, "Pulse 3 - Elmo", 20, WIDTH * 16/20, HEIGHT * 6/10)
 
         pygame.display.flip()
 
@@ -65,7 +74,14 @@ class Game():
                     pygame.quit()
                     quit()
                 if event.type == pygame.KEYUP: 
-                    if event.key == pygame.K_1:    
+                    if event.key == pygame.K_1:
+                        return "avion2" #   aca iria el nombre del png
+                        waiting = False 
+                    if event.key == pygame.K_2:
+                        return "halcon"
+                        waiting = False 
+                    if event.key == pygame.K_3:
+                        return "nave3"
                         waiting = False 
 #--------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------Comienzo del loop juego--------------------------------------------
@@ -73,7 +89,7 @@ class Game():
         while self.running:
             if self.game_over:
                 self.show_go_screen()          #pantalla de inicio
-                self.choose_ship()         #pantalla para elegir nave (solo hay 1 por ahora)
+                ship_image = self.choose_ship()         #pantalla para elegir nave (solo hay 1 por ahora)
                 self.game_over = False
 
                 self.all_sprites = pygame.sprite.Group()
@@ -81,7 +97,7 @@ class Game():
                 self.bullets = pygame.sprite.Group()
                 
                 #Jugador
-                player = Player()
+                player = Player(ship_image)
                 self.all_sprites.add(player)
 
                 for i in range(8):
@@ -184,11 +200,11 @@ class Game():
 #-----------------------------------------------------Fin del loop juego---------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------
 class Player(pygame.sprite.Sprite):
-    def __init__(self):
+    def __init__(self, image):
         """Creamos los atributos del jugador"""
         super().__init__()
         self.laser_sound = pygame.mixer.Sound("assets/sounds/laser5.wav")
-        self.image = pygame.image.load("assets/halcon.png").convert()
+        self.image = pygame.image.load("assets/" + image + ".png").convert()
         self.image.set_colorkey(BLACK)  
         self.rect = self.image.get_rect()
         #mascara

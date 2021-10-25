@@ -9,6 +9,7 @@ HEIGHT = 600
 BLACK = (0, 0, 0)
 WHITE = ( 255, 255, 255)
 GREEN = (0, 255, 0)
+DARK_GREEN = (0, 125, 0)
 
 class Game():
     def __init__(self):
@@ -35,18 +36,22 @@ class Game():
 
         waiting = True
         while waiting:
-            #self.clock.tick(60)
+            self.clock.tick(60)
             for event in pygame.event.get():
+                # Si el usuario cierra el programa
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                # Si el usuario presiona "Enter"
                 if event.type == pygame.KEYUP: 
                     if event.key == pygame.K_RETURN:      
-                        waiting = False             
+                        waiting = False        
+                # Si el usuario presiona "ESC"    
                 if event.type == pygame.KEYUP: 
                     if event.key == pygame.K_ESCAPE:      
                         pygame.quit()
-                        quit()                                            
+                        quit()
+
     
     #Pantalla para elegir nave
     def choose_ship(self):
@@ -75,22 +80,52 @@ class Game():
                     quit()
                 if event.type == pygame.KEYUP: 
                     if event.key == pygame.K_1:
+                        waiting = False 
                         return "avion2" #   aca iria el nombre del png
-                        waiting = False 
                     if event.key == pygame.K_2:
+                        waiting = False 
                         return "halcon"
-                        waiting = False 
                     if event.key == pygame.K_3:
-                        return "nave3"
                         waiting = False 
+                        return "nave3"
+        
+    def game_over_screen(self):
+        self.screen.blit(self.background, [0,0])
+        self.draw_text(self.screen, "FIN DEL JUEGO", 60, WIDTH // 2, HEIGHT // 4)
+        self.draw_text(self.screen, "Puntaje total: " + str(self.score), 30, WIDTH // 2, HEIGHT / 2.5)
+        self.draw_text(self.screen, "Presione ENTER para volver a jugar", 20, WIDTH // 2, HEIGHT / 1.7)
+        self.draw_text(self.screen, "Precione ESC para salir", 20, WIDTH // 2, HEIGHT / 1.5)
+        pygame.display.flip()
+
+        waiting = True
+        while waiting:
+            self.clock.tick(60)
+            for event in pygame.event.get():
+                # Si el usuario cierra el programa
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                # Si el usuario presiona "Enter"
+                if event.type == pygame.KEYUP: 
+                    if event.key == pygame.K_RETURN:      
+                        waiting = False 
+                        return       
+                # Si el usuario presiona "ESC"    
+                if event.type == pygame.KEYUP: 
+                    if event.key == pygame.K_ESCAPE:      
+                        pygame.quit()
+                        quit()
+
 #--------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------Comienzo del loop juego--------------------------------------------
     def main_loop(self):
+        self.show_go_screen()                   #pantalla de inicio
+
         while self.running:
             if self.game_over:
-                self.show_go_screen()          #pantalla de inicio
-                ship_image = self.choose_ship()         #pantalla para elegir nave (solo hay 1 por ahora)
                 self.game_over = False
+
+                ship_image = self.choose_ship()         #pantalla para elegir nave (solo hay 1 por ahora)
 
                 self.all_sprites = pygame.sprite.Group()
                 meteor_list = pygame.sprite.Group()
@@ -154,7 +189,7 @@ class Game():
             # Colisiones - jugador - meteoro
             hits = pygame.sprite.spritecollide(player, meteor_list, True, pygame.sprite.collide_mask)
             for hit in hits:
-                player.shield -= 25
+                player.shield -= 25 # Al ser chocado, disminuye en 25 su salud
                 meteor = Meteor()
                 self.explosion_sound.play()
                 explosion = Explosion(hit.rect.center)
@@ -162,7 +197,9 @@ class Game():
                 self.all_sprites.add(explosion)
                 meteor_list.add(meteor)
                 if player.shield <= 0: # si el jugador se queda sin puntos pierde
+                    self.game_over_screen()
                     self.game_over = True
+
 
             self.screen.blit(self.background, [0, 0])
 
@@ -197,6 +234,7 @@ class Game():
         pygame.draw.rect(surface, GREEN, fill)
         pygame.draw.rect(surface, WHITE, border, 2)
 
+
 #-----------------------------------------------------Fin del loop juego---------------------------------------------
 #--------------------------------------------------------------------------------------------------------------------
 class Player(pygame.sprite.Sprite):
@@ -212,7 +250,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.centerx = WIDTH // 2
         self.rect.bottom = HEIGHT - 10
         self.speed_x = 0
-        self.shield = 100
+        self.shield = 100 # Salud
 
     def update(self):
         """Genera el movimiento"""
@@ -319,6 +357,10 @@ if __name__ == '__main__':
     pygame.mixer.music.load("assets/sounds/music.wav")
     pygame.mixer.music.set_volume(0.2)
     pygame.mixer.music.play(loops=-1)
-
+    pygame.font.SysFont("arial", 14)
+    
     game = Game()
     game.main_loop()
+
+# TODO: Seleccion de naves mediante las flechas del teclado
+# TODO: Mejorar la pantalla de inicio

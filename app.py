@@ -45,7 +45,7 @@ class Game():
                     quit()
                 # Si el usuario presiona "Enter"
                 if event.type == pygame.KEYUP: 
-                    if event.key == pygame.K_RETURN:      
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:      
                         waiting = False        
                 # Si el usuario presiona "ESC"    
                 if event.type == pygame.KEYUP: 
@@ -80,13 +80,13 @@ class Game():
                     pygame.quit()
                     quit()
                 if event.type == pygame.KEYUP: 
-                    if event.key == pygame.K_1:
+                    if event.key == pygame.K_1 or event.key == pygame.K_KP1:
                         waiting = False 
                         return "avion2" #   aca iria el nombre del png
-                    if event.key == pygame.K_2:
+                    if event.key == pygame.K_2 or event.key == pygame.K_KP2:
                         waiting = False 
                         return "halcon"
-                    if event.key == pygame.K_3:
+                    if event.key == pygame.K_3 or event.key == pygame.K_KP3:
                         waiting = False 
                         return "nave3"
         
@@ -109,7 +109,7 @@ class Game():
                     quit()
                 # Si el usuario presiona "Enter"
                 if event.type == pygame.KEYUP: 
-                    if event.key == pygame.K_RETURN:      
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:      
                         waiting = False 
                         return       
                 # Si el usuario presiona "ESC"    

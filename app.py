@@ -9,7 +9,8 @@ HEIGHT = 600
 BLACK = (0, 0, 0)
 WHITE = ( 255, 255, 255)
 GREEN = (0, 255, 0)
-DARK_GREEN = (0, 125, 0)
+
+
 
 class Game():
     def __init__(self):
@@ -29,9 +30,9 @@ class Game():
     #Pantalla de inicio
     def show_go_screen(self):
         self.screen.blit(self.background, [0,0])
-        self.draw_text(self.screen, "SHOOTER", 65, WIDTH // 2, HEIGHT // 4)
-        self.draw_text(self.screen, "Presione ENTER para iniciar", 20, WIDTH // 2, HEIGHT // 2)
-        self.draw_text(self.screen, "Precione ESC para salir", 20, WIDTH // 2, HEIGHT * 6/10)
+        self.draw_logo(self.screen, "SHOOTER", WIDTH // 2, HEIGHT // 3)
+        self.draw_text_general(self.screen, "Presione ENTER para iniciar", WIDTH // 2, HEIGHT / 1.3)
+        self.draw_text_general(self.screen, "Precione ESC para salir", WIDTH // 2, HEIGHT / 1.2)
         pygame.display.flip()
 
         waiting = True
@@ -59,16 +60,16 @@ class Game():
 
         self.image = pygame.image.load("assets/avion2-costado.png")
         self.screen.blit(self.image, [WIDTH * 2/20, HEIGHT * 4/10])
-        self.draw_text(self.screen, "Pulse 1 - Boeing 747", 20, WIDTH * 4/20, HEIGHT * 6/10)
+        self.draw_text_general(self.screen, "1 - Boeing 747", WIDTH * 4/20, HEIGHT * 6/10)
         
         self.image = pygame.image.load("assets/halconM.png").convert()
         self.image.set_colorkey(BLACK)
         self.screen.blit(self.image, [WIDTH * 8/20, HEIGHT * 4/10])
-        self.draw_text(self.screen, "Pulse 2 - Halcon Milenario", 20, WIDTH // 2, HEIGHT * 6/10)
+        self.draw_text_general(self.screen, "2 - Halcon Milenario", WIDTH // 2, HEIGHT * 6/10)
 
         self.image = pygame.image.load("assets/elmo.png")
         self.screen.blit(self.image, [WIDTH * 14/20, HEIGHT * 2.3/10])
-        self.draw_text(self.screen, "Pulse 3 - Elmo", 20, WIDTH * 16/20, HEIGHT * 6/10)
+        self.draw_text_general(self.screen, "3 - Elmo", WIDTH * 16/20, HEIGHT * 6/10)
 
         pygame.display.flip()
 
@@ -91,10 +92,11 @@ class Game():
         
     def game_over_screen(self):
         self.screen.blit(self.background, [0,0])
-        self.draw_text(self.screen, "FIN DEL JUEGO", 60, WIDTH // 2, HEIGHT // 4)
-        self.draw_text(self.screen, "Puntaje total: " + str(self.score), 30, WIDTH // 2, HEIGHT / 2.5)
-        self.draw_text(self.screen, "Presione ENTER para volver a jugar", 20, WIDTH // 2, HEIGHT / 1.7)
-        self.draw_text(self.screen, "Precione ESC para salir", 20, WIDTH // 2, HEIGHT / 1.5)
+        self.draw_logo(self.screen, "SHOOTER", WIDTH // 2, HEIGHT // 4)
+        self.draw_text_titles(self.screen, "FIN DEL JUEGO", WIDTH // 2, HEIGHT / 2)
+        self.draw_text_general(self.screen, "Puntaje total: " + str(self.score), WIDTH // 2, HEIGHT / 1.6)
+        self.draw_text_general(self.screen, "Presione ENTER para volver a jugar", WIDTH // 2, HEIGHT / 1.3)
+        self.draw_text_general(self.screen, "Precione ESC para salir", WIDTH // 2, HEIGHT / 1.2)
         pygame.display.flip()
 
         waiting = True
@@ -155,9 +157,9 @@ class Game():
             #Pausa
             while self.paused:
                 self.running = False
-                self.draw_text(self.pause_background, "Pausa", 60, WIDTH // 2, 50)
-                self.draw_text(self.pause_background, "Presione 'P' o 'Esc' para continuar", 37, WIDTH // 2, HEIGHT // 2)
-                self.draw_text(self.pause_background, "Presione 'Q' para salir", 30, WIDTH // 2, HEIGHT * 3/4)
+                self.draw_text(self.pause_background, "Pausa", 20, WIDTH // 2, 50)
+                self.draw_text_general(self.pause_background, "Presione 'P' o 'Esc' para continuar", WIDTH // 2, HEIGHT // 2)
+                self.draw_text_general(self.pause_background, "Presione 'Q' para salir", WIDTH // 2, HEIGHT * 3/4)
                 self.screen.blit(self.pause_background, [0, 0])
                 pygame.display.update()
                 for event in pygame.event.get():
@@ -206,24 +208,35 @@ class Game():
             self.all_sprites.draw(self.screen)
 
             #Marcador
-            self.draw_text(self.screen, str(self.score), 25, WIDTH * 33/35, 10)
-            self.draw_text(self.screen, "Puntaje:", 25, WIDTH * 30/35, 10)
+            self.draw_text_general(self.screen, str(self.score), WIDTH * 33/35, 10)
+            self.draw_text_general(self.screen, "Puntaje:", WIDTH * 30/35, 10)
 
             # Escudo.
             self.draw_shield_bar(self.screen, 5, 5, player.shield)
-            self.draw_text(self.screen, "Salud", 20, WIDTH * 3/35, HEIGHT * 1/35)
+            self.draw_text_general(self.screen, "Salud",  WIDTH * 3/35, HEIGHT * 1/35)
             pygame.display.flip()
 
         pygame.quit()
     
+    def draw_logo(self, surface, text, x, y):
+        text_surface = font_logo.render(text, True, WHITE)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        surface.blit(text_surface, text_rect)
+
     #Escribir texto en pantalla
-    def draw_text(self, surface, text, size, x, y):
-        font = pygame.font.SysFont("serif", size)
-        text_surface = font.render(text, True, WHITE)
+    def draw_text_general(self, surface, text, x, y):
+        text_surface = font_general.render(text, True, WHITE)
         text_rect = text_surface.get_rect()
         text_rect.midtop = (x, y)
         surface.blit(text_surface, text_rect)
     
+    def draw_text_titles(self, surface, text, x, y):
+        text_surface = font_titles.render(text, True, WHITE)
+        text_rect = text_surface.get_rect()
+        text_rect.midtop = (x, y)
+        surface.blit(text_surface, text_rect)
+
     #Barra de vida
     def draw_shield_bar(self, surface, x, y, percentage):
         BAR_LENGHT = 100
@@ -352,6 +365,11 @@ class Explosion(pygame.sprite.Sprite):
 if __name__ == '__main__':
     """Esto es lo primero que se ejecuta cuando se llama a app.py"""
     pygame.init()
+
+    font_logo    = pygame.font.Font("./assets/fonts/Quicksilver Italic.ttf", 90)
+    font_general = pygame.font.Font("./assets/fonts/8-bit-hud.ttf", 10)
+    font_titles  = pygame.font.Font("./assets/fonts/8-bit-hud.ttf", 20)
+
     pygame.mixer.init()
     pygame.display.set_caption("Shooter")
     pygame.mixer.music.load("assets/sounds/music.wav")
@@ -363,4 +381,3 @@ if __name__ == '__main__':
     game.main_loop()
 
 # TODO: Seleccion de naves mediante las flechas del teclado
-# TODO: Mejorar la pantalla de inicio

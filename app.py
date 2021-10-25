@@ -31,8 +31,8 @@ class Game():
     def show_go_screen(self):
         self.screen.blit(self.background, [0,0])
         self.draw_logo(self.screen, "SHOOTER", WIDTH // 2, HEIGHT // 3)
-        self.draw_text_general(self.screen, "Presione ENTER para iniciar", WIDTH // 2, HEIGHT / 1.3)
-        self.draw_text_general(self.screen, "Precione ESC para salir", WIDTH // 2, HEIGHT / 1.2)
+        self.draw_text_general(self.screen, "Presione 'ENTER' para iniciar", WIDTH // 2, HEIGHT / 1.3)
+        self.draw_text_general(self.screen, "Precione 'ESC' para salir", WIDTH // 2, HEIGHT / 1.2)
         pygame.display.flip()
 
         waiting = True
@@ -95,8 +95,8 @@ class Game():
         self.draw_logo(self.screen, "SHOOTER", WIDTH // 2, HEIGHT // 4)
         self.draw_text_titles(self.screen, "FIN DEL JUEGO", WIDTH // 2, HEIGHT / 2)
         self.draw_text_general(self.screen, "Puntaje total: " + str(self.score), WIDTH // 2, HEIGHT / 1.6)
-        self.draw_text_general(self.screen, "Presione ENTER para volver a jugar", WIDTH // 2, HEIGHT / 1.3)
-        self.draw_text_general(self.screen, "Precione ESC para salir", WIDTH // 2, HEIGHT / 1.2)
+        self.draw_text_general(self.screen, "Presione 'ENTER' para volver a jugar", WIDTH // 2, HEIGHT / 1.3)
+        self.draw_text_general(self.screen, "Precione 'ESC' para salir", WIDTH // 2, HEIGHT / 1.2)
         pygame.display.flip()
 
         waiting = True
@@ -121,13 +121,13 @@ class Game():
 #--------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------Comienzo del loop juego--------------------------------------------
     def main_loop(self):
-        self.show_go_screen()                   #pantalla de inicio
+        self.show_go_screen() #pantalla de inicio
 
         while self.running:
             if self.game_over:
                 self.game_over = False
 
-                ship_image = self.choose_ship()         #pantalla para elegir nave (solo hay 1 por ahora)
+                ship_image = self.choose_ship() #pantalla para elegir nave (solo hay 1 por ahora)
 
                 self.all_sprites = pygame.sprite.Group()
                 meteor_list = pygame.sprite.Group()
@@ -157,9 +157,9 @@ class Game():
             #Pausa
             while self.paused:
                 self.running = False
-                self.draw_text(self.pause_background, "Pausa", 20, WIDTH // 2, 50)
-                self.draw_text_general(self.pause_background, "Presione 'P' o 'Esc' para continuar", WIDTH // 2, HEIGHT // 2)
-                self.draw_text_general(self.pause_background, "Presione 'Q' para salir", WIDTH // 2, HEIGHT * 3/4)
+                self.draw_text_titles(self.pause_background, "PAUSA", WIDTH // 2, HEIGHT / 2)
+                self.draw_text_general(self.pause_background, "Presione 'P' o 'Esc' para continuar",  WIDTH // 2, HEIGHT / 1.3)
+                self.draw_text_general(self.pause_background, "Presione 'Q' para salir", WIDTH // 2, HEIGHT / 1.2)
                 self.screen.blit(self.pause_background, [0, 0])
                 pygame.display.update()
                 for event in pygame.event.get():

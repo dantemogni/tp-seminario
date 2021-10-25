@@ -16,6 +16,10 @@ class Game():
         self.background = pygame.image.load("assets/fondo2.png").convert()
         self.pause_background = pygame.image.load("assets/background.png").convert()
         self.explosion_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
+        self.sonidos_img_verde = pygame.image.load("assets/boton_sonidos_verde.png")
+        self.sonidos_img_rojo = pygame.image.load("assets/boton_sonidos_rojo.png")
+        self.musica_img_verde = pygame.image.load("assets/boton_musica_verde.png")
+        self.musica_img_rojo = pygame.image.load("assets/boton_musica_rojo.png")
         self.explosion_sound.set_volume(0.2)
         self.game_over = True 
         self.running = True
@@ -24,6 +28,8 @@ class Game():
         self.clock = pygame.time.Clock()
         self.bullets = pygame.sprite.Group()
         self.paused = False
+        self.sound_on = True
+        self.music_on = True
 
     #Pantalla de inicio
     def show_go_screen(self):
@@ -136,6 +142,16 @@ class Game():
                 player = Player(ship_image)
                 self.all_sprites.add(player)
 
+                #botones
+                sonidos_verde = Button(WIDTH-160,25,game.sonidos_img_verde, 0.7)                
+                sonidos_rojo = Button(WIDTH-160,25,game.sonidos_img_rojo, 0.7)
+                musica_verde = Button(WIDTH-160,85,game.musica_img_verde, 0.7)
+                musica_rojo = Button(WIDTH-160,85,game.musica_img_rojo, 0.7)
+
+                if game.music_on == False:
+                    game.explosion_sound.set_volume(0)
+                    player.laser_sound.set_volume(0)
+
                 for i in range(8):
                     meteor = Meteor()
                     self.all_sprites.add(meteor)
@@ -161,6 +177,26 @@ class Game():
                 self.draw_text_general(self.pause_background, "Presione 'P' o 'Esc' para continuar",  WIDTH // 2, HEIGHT / 1.3)
                 self.draw_text_general(self.pause_background, "Presione 'Q' para salir", WIDTH // 2, HEIGHT / 1.2)
                 self.screen.blit(self.pause_background, [0, 0])
+
+                if game.sound_on:
+                    if sonidos_verde.draw():
+                        game.sound_on = False
+                        pygame.mixer.music.pause()
+                else:
+                    if sonidos_rojo.draw():
+                       game.sound_on = True 
+                       pygame.mixer.music.unpause()
+                if game.music_on:
+                    if musica_verde.draw():
+                        game.music_on = False
+                        game.explosion_sound.set_volume(0)
+                        player.laser_sound.set_volume(0)
+                else:
+                    if musica_rojo.draw():
+                       game.music_on = True 
+                       game.explosion_sound.set_volume(0.2)
+                       player.laser_sound.set_volume(1)
+
                 pygame.display.update()
                 for event in pygame.event.get():
                     if event.type == pygame.QUIT:
@@ -366,6 +402,30 @@ class Explosion(pygame.sprite.Sprite):
                 self.image = self.explosion_anim[self.frame]
                 self.rect = self.image.get_rect()
                 self.rect.center = center
+
+class Button():
+    def __init__(self, x, y, image, scale):
+        width = image.get_width()
+        height = image.get_height()
+        self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+        self.clicked = False
+
+    def draw(self):
+        action = False
+        pos = pygame.mouse.get_pos()
+        if self.rect.collidepoint(pos):
+            if pygame.mouse.get_pressed()[0]:
+                self.clicked = True               
+            else:
+                if self.clicked == True:
+                    action = True
+                    self.clicked = False
+
+        game.pause_background.blit(self.image, (self.rect.x, self.rect.y))
+
+        return action
 
 if __name__ == '__main__':
     """Esto es lo primero que se ejecuta cuando se llama a app.py"""

@@ -10,8 +10,6 @@ BLACK = (0, 0, 0)
 WHITE = ( 255, 255, 255)
 GREEN = (0, 255, 0)
 
-
-
 class Game():
     def __init__(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -122,6 +120,7 @@ class Game():
 #-------------------------------------------------Comienzo del loop juego--------------------------------------------
     def main_loop(self):
         self.show_go_screen() #pantalla de inicio
+        start_time = pygame.time.get_ticks()
 
         while self.running:
             if self.game_over:
@@ -141,6 +140,7 @@ class Game():
                     meteor = Meteor()
                     self.all_sprites.add(meteor)
                     meteor_list.add(meteor)
+
                 self.score = 0
 
             self.clock.tick(60)   #Velocidad del juego
@@ -214,6 +214,11 @@ class Game():
             # Escudo.
             self.draw_shield_bar(self.screen, 5, 5, player.shield)
             self.draw_text_general(self.screen, "Salud",  WIDTH * 3/35, HEIGHT * 1/35)
+
+            
+            if pygame.time.get_ticks() - start_time < 4000:
+                self.draw_text_general(self.screen, "Presione 'P' o 'ESC' para pausar el juego", WIDTH // 2, HEIGHT * 6/10)
+
             pygame.display.flip()
 
         pygame.quit()

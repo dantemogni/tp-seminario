@@ -148,7 +148,7 @@ class Game():
                 musica_verde = Button(WIDTH-160,85,game.musica_img_verde, 0.7)
                 musica_rojo = Button(WIDTH-160,85,game.musica_img_rojo, 0.7)
 
-                if game.music_on == False:
+                if game.sound_on == False:
                     game.explosion_sound.set_volume(0)
                     player.laser_sound.set_volume(0)
 
@@ -181,21 +181,21 @@ class Game():
                 if game.sound_on:
                     if sonidos_verde.draw():
                         game.sound_on = False
-                        pygame.mixer.music.pause()
-                else:
-                    if sonidos_rojo.draw():
-                       game.sound_on = True 
-                       pygame.mixer.music.unpause()
-                if game.music_on:
-                    if musica_verde.draw():
-                        game.music_on = False
                         game.explosion_sound.set_volume(0)
                         player.laser_sound.set_volume(0)
                 else:
-                    if musica_rojo.draw():
-                       game.music_on = True 
+                    if sonidos_rojo.draw():
+                       game.sound_on = True
                        game.explosion_sound.set_volume(0.2)
-                       player.laser_sound.set_volume(1)
+                       player.laser_sound.set_volume(1)    
+                if game.music_on:
+                    if musica_verde.draw():
+                        game.music_on = False
+                        pygame.mixer.music.pause()   
+                else:
+                    if musica_rojo.draw():
+                       game.music_on = True
+                       pygame.mixer.music.unpause()   
 
                 pygame.display.update()
                 for event in pygame.event.get():

@@ -38,7 +38,7 @@ class Game():
         self.screen.blit(self.background, [0,0])
         self.draw_logo(self.screen, "SHOOTER", WIDTH // 2, HEIGHT // 3)
         self.draw_text_general(self.screen, "Presione 'ENTER' para iniciar", WIDTH // 2, HEIGHT / 1.3)
-        self.draw_text_general(self.screen, "Precione 'ESC' para salir", WIDTH // 2, HEIGHT / 1.2)
+        self.draw_text_general(self.screen, "Presione 'ESC' para salir", WIDTH // 2, HEIGHT / 1.2)
         pygame.display.flip()
 
         waiting = True
@@ -103,7 +103,7 @@ class Game():
         self.draw_text_titles(self.screen, "FIN DEL JUEGO", WIDTH // 2, HEIGHT / 2)
         self.draw_text_general(self.screen, "Puntaje total: " + str(self.score), WIDTH // 2, HEIGHT / 1.6)
         self.draw_text_general(self.screen, "Presione 'ENTER' para volver a jugar", WIDTH // 2, HEIGHT / 1.3)
-        self.draw_text_general(self.screen, "Precione 'ESC' para salir", WIDTH // 2, HEIGHT / 1.2)
+        self.draw_text_general(self.screen, "Presione 'ESC' para salir", WIDTH // 2, HEIGHT / 1.2)
         pygame.display.flip()
 
         waiting = True

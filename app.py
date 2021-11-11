@@ -25,7 +25,6 @@ class Game():
         self.explosion_sound.set_volume(0.2)
         self.game_over = True 
         self.running = True
-        self.score = 0
         self.all_sprites = pygame.sprite.Group()
         self.clock = pygame.time.Clock()
         self.bullets = pygame.sprite.Group()
@@ -135,11 +134,11 @@ class Game():
                         waiting = False 
                         return "nave3"
         
-    def game_over_screen(self):
+    def game_over_screen(self, player):
         self.screen.blit(self.game_background, [0,0])
         self.draw_logo(self.screen, "SHOOTER", WIDTH // 2, HEIGHT // 4)
         self.draw_text_titles(self.screen, "FIN DEL JUEGO", WIDTH // 2, HEIGHT / 2)
-        self.draw_text_general(self.screen, "Puntaje total: " + str(self.score), WIDTH // 2, HEIGHT / 1.6)
+        self.draw_text_general(self.screen, "Puntaje total: " + str(player.score), WIDTH // 2, HEIGHT / 1.6)
         self.draw_text_general(self.screen, "Presione 'ENTER' para volver a jugar", WIDTH // 2, HEIGHT / 1.3)
         self.draw_text_general(self.screen, "Presione 'ESC' para salir", WIDTH // 2, HEIGHT / 1.2)
         pygame.display.flip()
@@ -172,7 +171,7 @@ class Game():
         self.sonidos_rojo = Button(WIDTH-160,25,self.sonidos_img_rojo, 0.7)
         self.musica_verde = Button(WIDTH-160,85,self.musica_img_verde, 0.7)
         self.musica_rojo = Button(WIDTH-160,85,self.musica_img_rojo, 0.7)
-        
+
         while self.paused:
             self.running = False
             self.draw_text_titles(self.pause_background, "PAUSA", WIDTH // 2, HEIGHT / 2)
@@ -222,14 +221,17 @@ class Game():
             if self.game_over:
                 self.game_over = False
 
+                # Pantalla para elegir dificultad
                 difficulty = self.choose_difficulty()
-                ship_image = self.choose_ship() #pantalla para elegir nave (solo hay 1 por ahora)
+
+                # Pantalla para elegir nave
+                ship_image = self.choose_ship() 
 
                 self.all_sprites = pygame.sprite.Group()
                 meteor_list = pygame.sprite.Group()
                 self.bullets = pygame.sprite.Group()
                 
-                #Jugador
+                # Jugador
                 player = Player(ship_image)
                 self.all_sprites.add(player)
 
@@ -238,12 +240,14 @@ class Game():
                 pause_msg_timer = pygame.time.get_ticks()
                 retore_health_timer = pygame.time.get_ticks()
 
-                self.score = 0
+                # Establece el puntaje a cero
+                player.score = 0
 
                 if game.sound_on == False:
                     game.explosion_sound.set_volume(0)
                     player.laser_sound.set_volume(0)
 
+                # Segun la dificultad elegida, la cantidad de naves que apareceran
                 if(difficulty == 1):
                     for i in range(3):
                         meteor = Meteor()
@@ -286,7 +290,7 @@ class Game():
             #colisiones - meteoro - laser
             hits = pygame.sprite.groupcollide(meteor_list, self.bullets, True, True)
             for hit in hits:
-                self.score += 10
+                # player.score += 10
                 self.explosion_sound.play()
                 explosion = Explosion(hit.rect.center)
                 self.all_sprites.add(explosion)
@@ -305,7 +309,7 @@ class Game():
                 self.all_sprites.add(explosion)
                 meteor_list.add(meteor)
                 if player.shield <= 0: # si el jugador se queda sin puntos pierde
-                    self.game_over_screen()
+                    self.game_over_screen(player)
                     self.game_over = True
 
 
@@ -314,7 +318,7 @@ class Game():
             self.all_sprites.draw(self.screen)
 
             #Marcador
-            self.draw_text_general(self.screen, str(self.score), WIDTH * 33/35, 10)
+            self.draw_text_general(self.screen, str(player.score), WIDTH * 33/35, 10)
             self.draw_text_general(self.screen, "Puntaje:", WIDTH * 30/35, 10)
 
             # Escudo.
@@ -325,11 +329,16 @@ class Game():
             if pygame.time.get_ticks() - pause_msg_timer < 4000:
                 self.draw_text_general(self.screen, "Presione 'P' o 'ESC' para pausar el juego", WIDTH // 2, HEIGHT * 6/10)
 
-            # Aumenta la salud del jugador cada 4 segundos 
-            if pygame.time.get_ticks() - retore_health_timer > 4000:
+            # Aumenta la salud del jugador cada 5 segundos 
+            if pygame.time.get_ticks() - retore_health_timer > 5000:
                 if player.shield < 100:
                     player.shield += 5
                 retore_health_timer = pygame.time.get_ticks() # reinicia el contador
+
+            # Aumenta el puntaje del jugador por sobrevivir 3 segundos 
+            if pygame.time.get_ticks() - start_timer > 3000:
+                player.score += 1
+                start_timer = pygame.time.get_ticks() # reinicia el contador
 
             pygame.display.flip()
 
@@ -381,6 +390,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom = HEIGHT - 10
         self.speed_x = 0
         self.shield = 100 # Salud
+        self.score = 0
 
     def update(self):
         """Genera el movimiento"""

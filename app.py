@@ -130,6 +130,7 @@ class Game():
     def main_loop(self):
         self.show_go_screen() #pantalla de inicio
         start_time = pygame.time.get_ticks()
+        retore_health_timer = pygame.time.get_ticks()
 
         while self.running:
             if self.game_over:
@@ -257,6 +258,12 @@ class Game():
             
             if pygame.time.get_ticks() - start_time < 4000:
                 self.draw_text_general(self.screen, "Presione 'P' o 'ESC' para pausar el juego", WIDTH // 2, HEIGHT * 6/10)
+
+            # Aumenta la salud del jugador cada 4 segundos 
+            if pygame.time.get_ticks() - retore_health_timer > 4000:
+                if player.shield < 100:
+                    player.shield += 5
+                retore_health_timer = pygame.time.get_ticks()
 
             pygame.display.flip()
 

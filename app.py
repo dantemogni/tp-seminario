@@ -60,10 +60,48 @@ class Game():
                         pygame.quit()
                         quit()
 
-    
+    # Pantalla para elegir la dificultad
+    def choose_difficulty(self):
+        self.screen.blit(self.ship_background, [0,0])
+
+        self.draw_text_titles(self.screen, "Elige la dificultad", WIDTH // 2, HEIGHT / 2.7)
+
+        self.draw_text_general(self.screen, "1 - Muy Facil", WIDTH * 4/30, HEIGHT * 6/10)
+        self.draw_text_general(self.screen, "2 - Facil", WIDTH / 3.15, HEIGHT * 6/10)
+        self.draw_text_general(self.screen, "3 - Normal", WIDTH / 2, HEIGHT * 6/10)
+        self.draw_text_general(self.screen, "4 - Dificil", WIDTH / 1.48, HEIGHT * 6/10)
+        self.draw_text_general(self.screen, "5 - Extremo ;)", WIDTH / 1.15, HEIGHT * 6/10)
+
+        pygame.display.flip()
+
+        waiting = True
+        while waiting:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYUP: 
+                    if event.key == pygame.K_1 or event.key == pygame.K_KP1:
+                        waiting = False 
+                        return 1 
+                    if event.key == pygame.K_2 or event.key == pygame.K_KP2:
+                        waiting = False 
+                        return 2
+                    if event.key == pygame.K_3 or event.key == pygame.K_KP3:
+                        waiting = False 
+                        return 3
+                    if event.key == pygame.K_4 or event.key == pygame.K_KP4:
+                        waiting = False 
+                        return 4
+                    if event.key == pygame.K_5 or event.key == pygame.K_KP5:
+                        waiting = False 
+                        return 5
+
+
     #Pantalla para elegir nave
     def choose_ship(self):
         self.screen.blit(self.ship_background, [0,0])
+        self.draw_text_titles(self.screen, "Elige la nave", WIDTH // 2, HEIGHT / 7)
 
         self.image = pygame.image.load("assets/avion2-costado.png")
         self.screen.blit(self.image, [WIDTH * 2/20, HEIGHT * 4/10])
@@ -136,6 +174,7 @@ class Game():
             if self.game_over:
                 self.game_over = False
 
+                difficulty = self.choose_difficulty()
                 ship_image = self.choose_ship() #pantalla para elegir nave (solo hay 1 por ahora)
 
                 self.all_sprites = pygame.sprite.Group()
@@ -156,10 +195,32 @@ class Game():
                     game.explosion_sound.set_volume(0)
                     player.laser_sound.set_volume(0)
 
-                for i in range(8):
-                    meteor = Meteor()
-                    self.all_sprites.add(meteor)
-                    meteor_list.add(meteor)
+                if(difficulty == 1):
+                    for i in range(3):
+                        meteor = Meteor()
+                        self.all_sprites.add(meteor)
+                        meteor_list.add(meteor)
+                elif (difficulty == 2):
+                     for i in range(5):
+                        meteor = Meteor()
+                        self.all_sprites.add(meteor)
+                        meteor_list.add(meteor)
+                elif (difficulty == 3):
+                     for i in range(9):
+                        meteor = Meteor()
+                        self.all_sprites.add(meteor)
+                        meteor_list.add(meteor)
+                elif (difficulty == 4):
+                     for i in range(14):
+                        meteor = Meteor()
+                        self.all_sprites.add(meteor)
+                        meteor_list.add(meteor)
+                else:
+                    for i in range(24):
+                        meteor = Meteor()
+                        self.all_sprites.add(meteor)
+                        meteor_list.add(meteor)    
+                
 
                 self.score = 0
 

@@ -13,8 +13,10 @@ GREEN = (0, 255, 0)
 class Game():
     def __init__(self):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        self.background = pygame.image.load("assets/fondo2.png").convert()
-        self.pause_background = pygame.image.load("assets/background.png").convert()
+        self.background = pygame.image.load("assets/fondo.png").convert()
+        self.pause_background = pygame.image.load("assets/fondo-pausa.png").convert()
+        self.game_background = pygame.image.load("assets/fondo-juego.png").convert()
+        self.ship_background = pygame.image.load("assets/fondo-nave.png").convert()
         self.explosion_sound = pygame.mixer.Sound("assets/sounds/explosion.wav")
         self.sonidos_img_verde = pygame.image.load("assets/boton_sonidos_verde.png")
         self.sonidos_img_rojo = pygame.image.load("assets/boton_sonidos_rojo.png")
@@ -49,8 +51,9 @@ class Game():
                     quit()
                 # Si el usuario presiona "Enter"
                 if event.type == pygame.KEYUP: 
-                    if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:      
-                        waiting = False        
+                    if event.key == pygame.K_RETURN or event.key == pygame.K_KP_ENTER:
+                        waiting = False
+        
                 # Si el usuario presiona "ESC"    
                 if event.type == pygame.KEYUP: 
                     if event.key == pygame.K_ESCAPE:      
@@ -60,7 +63,7 @@ class Game():
     
     #Pantalla para elegir nave
     def choose_ship(self):
-        self.screen.blit(self.background, [0,0])
+        self.screen.blit(self.ship_background, [0,0])
 
         self.image = pygame.image.load("assets/avion2-costado.png")
         self.screen.blit(self.image, [WIDTH * 2/20, HEIGHT * 4/10])
@@ -95,7 +98,7 @@ class Game():
                         return "nave3"
         
     def game_over_screen(self):
-        self.screen.blit(self.background, [0,0])
+        self.screen.blit(self.game_background, [0,0])
         self.draw_logo(self.screen, "SHOOTER", WIDTH // 2, HEIGHT // 4)
         self.draw_text_titles(self.screen, "FIN DEL JUEGO", WIDTH // 2, HEIGHT / 2)
         self.draw_text_general(self.screen, "Puntaje total: " + str(self.score), WIDTH // 2, HEIGHT / 1.6)
@@ -239,7 +242,7 @@ class Game():
                     self.game_over = True
 
 
-            self.screen.blit(self.background, [0, 0])
+            self.screen.blit(self.game_background, [0, 0])
 
             self.all_sprites.draw(self.screen)
 

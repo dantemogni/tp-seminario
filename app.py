@@ -163,13 +163,61 @@ class Game():
                         pygame.quit()
                         quit()
 
+
+    def pause_screen(self, player):
+        self.paused = True
+
+        #botones
+        self.sonidos_verde = Button(WIDTH-160,25,self.sonidos_img_verde, 0.7)                
+        self.sonidos_rojo = Button(WIDTH-160,25,self.sonidos_img_rojo, 0.7)
+        self.musica_verde = Button(WIDTH-160,85,self.musica_img_verde, 0.7)
+        self.musica_rojo = Button(WIDTH-160,85,self.musica_img_rojo, 0.7)
+        
+        while self.paused:
+            self.running = False
+            self.draw_text_titles(self.pause_background, "PAUSA", WIDTH // 2, HEIGHT / 2)
+            self.draw_text_general(self.pause_background, "Presione 'P' o 'Esc' para continuar",  WIDTH // 2, HEIGHT / 1.3)
+            self.draw_text_general(self.pause_background, "Presione 'Q' para salir", WIDTH // 2, HEIGHT / 1.2)
+            self.screen.blit(self.pause_background, [0, 0])
+
+            if game.sound_on:
+                if self.sonidos_verde.draw():
+                    game.sound_on = False
+                    game.explosion_sound.set_volume(0)
+                    player.laser_sound.set_volume(0)
+            elif self.sonidos_rojo.draw():
+                    game.sound_on = True
+                    game.explosion_sound.set_volume(0.2)
+                    player.laser_sound.set_volume(1)    
+
+            if game.music_on:
+                if self.musica_verde.draw():
+                    game.music_on = False
+                    pygame.mixer.music.pause()   
+            elif self.musica_rojo.draw():
+                    game.music_on = True
+                    pygame.mixer.music.unpause()   
+
+            pygame.display.update()
+                
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
+                        self.paused = False
+                        self.running = True
+                        return
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        pygame.quit()
+                        quit()
 #--------------------------------------------------------------------------------------------------------------------
 #-------------------------------------------------Comienzo del loop juego--------------------------------------------
     def main_loop(self):
         self.show_go_screen() #pantalla de inicio
-        start_time = pygame.time.get_ticks()
-        retore_health_timer = pygame.time.get_ticks()
-
+        
         while self.running:
             if self.game_over:
                 self.game_over = False
@@ -185,11 +233,12 @@ class Game():
                 player = Player(ship_image)
                 self.all_sprites.add(player)
 
-                #botones
-                sonidos_verde = Button(WIDTH-160,25,game.sonidos_img_verde, 0.7)                
-                sonidos_rojo = Button(WIDTH-160,25,game.sonidos_img_rojo, 0.7)
-                musica_verde = Button(WIDTH-160,85,game.musica_img_verde, 0.7)
-                musica_rojo = Button(WIDTH-160,85,game.musica_img_rojo, 0.7)
+                # Variables de tiempo
+                start_timer = pygame.time.get_ticks()
+                pause_msg_timer = pygame.time.get_ticks()
+                retore_health_timer = pygame.time.get_ticks()
+
+                self.score = 0
 
                 if game.sound_on == False:
                     game.explosion_sound.set_volume(0)
@@ -220,10 +269,7 @@ class Game():
                         meteor = Meteor()
                         self.all_sprites.add(meteor)
                         meteor_list.add(meteor)    
-                
-
-                self.score = 0
-
+        
             self.clock.tick(60)   #Velocidad del juego
 
             for event in pygame.event.get():
@@ -233,49 +279,8 @@ class Game():
                     if event.key == pygame.K_SPACE:
                         player.shoot()
                     if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
-                        self.paused = True
-            
-            #Pausa
-            while self.paused:
-                self.running = False
-                self.draw_text_titles(self.pause_background, "PAUSA", WIDTH // 2, HEIGHT / 2)
-                self.draw_text_general(self.pause_background, "Presione 'P' o 'Esc' para continuar",  WIDTH // 2, HEIGHT / 1.3)
-                self.draw_text_general(self.pause_background, "Presione 'Q' para salir", WIDTH // 2, HEIGHT / 1.2)
-                self.screen.blit(self.pause_background, [0, 0])
-
-                if game.sound_on:
-                    if sonidos_verde.draw():
-                        game.sound_on = False
-                        game.explosion_sound.set_volume(0)
-                        player.laser_sound.set_volume(0)
-                else:
-                    if sonidos_rojo.draw():
-                       game.sound_on = True
-                       game.explosion_sound.set_volume(0.2)
-                       player.laser_sound.set_volume(1)    
-                if game.music_on:
-                    if musica_verde.draw():
-                        game.music_on = False
-                        pygame.mixer.music.pause()   
-                else:
-                    if musica_rojo.draw():
-                       game.music_on = True
-                       pygame.mixer.music.unpause()   
-
-                pygame.display.update()
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        quit()
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_p or event.key == pygame.K_ESCAPE:
-                            self.paused = False
-                            self.running = True
-                    if event.type == pygame.KEYDOWN:
-                        if event.key == pygame.K_q:
-                            pygame.quit()
-                            quit()
-
+                        self.pause_screen(player)
+        
             self.all_sprites.update()
 
             #colisiones - meteoro - laser
@@ -316,15 +321,15 @@ class Game():
             self.draw_shield_bar(self.screen, 5, 5, player.shield)
             self.draw_text_general(self.screen, "Salud",  WIDTH * 3/35, HEIGHT * 1/35)
 
-            
-            if pygame.time.get_ticks() - start_time < 4000:
+            # Muestro mensaje de pausa en los primeros 4 segundos
+            if pygame.time.get_ticks() - pause_msg_timer < 4000:
                 self.draw_text_general(self.screen, "Presione 'P' o 'ESC' para pausar el juego", WIDTH // 2, HEIGHT * 6/10)
 
             # Aumenta la salud del jugador cada 4 segundos 
             if pygame.time.get_ticks() - retore_health_timer > 4000:
                 if player.shield < 100:
                     player.shield += 5
-                retore_health_timer = pygame.time.get_ticks()
+                retore_health_timer = pygame.time.get_ticks() # reinicia el contador
 
             pygame.display.flip()
 
@@ -384,7 +389,7 @@ class Player(pygame.sprite.Sprite):
         if keystate[pygame.K_LEFT] and self.rect.left > 0:
             self.rect.x -= speed
         if keystate[pygame.K_RIGHT] and self.rect.right < WIDTH:
-            self.rect.x += speed 
+            self.rect.x += speed    
         if keystate[pygame.K_UP] and self.rect.top > 0:
             self.rect.y -= speed
         if keystate[pygame.K_DOWN] and self.rect.bottom < HEIGHT:
